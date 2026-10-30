@@ -81,7 +81,7 @@ export const webSearchTool = createTool({
   id: 'web_search',
   description: 'Search the web through the Gateway and return a concise answer with source URLs.',
   inputSchema: z.object({
-    query: z.string().describe('A targeted web search query.'),
+    query: z.string().min(1).max(4000).describe('A targeted web search query.'),
   }),
   outputSchema: z.object({
     answer: z.string(),
@@ -96,6 +96,7 @@ export const webSearchTool = createTool({
 
     const response = await fetch(getGatewayChatCompletionsUrl(), {
       method: 'POST',
+      signal: AbortSignal.timeout(30_000),
       headers: {
         Authorization: `Bearer ${apiKey}`,
         'Content-Type': 'application/json',

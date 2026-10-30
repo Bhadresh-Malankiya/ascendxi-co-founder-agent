@@ -1,13 +1,19 @@
 {
-  "name": "template-starter-agent",
+  "name": "ascendxi-co-founder-agent",
   "version": "1.0.0",
-  "description": "A general-purpose Mastra agent harness whose tools and chat channels come from your Mastra platform integration connections via @mastra/connect, with a platform-backed workspace, Studio editing (agents and workflows), and Postgres storage.",
+  "description": "AscendXI company operating system with department agents, durable assignments and approval-gated tools",
   "main": "index.js",
   "private": true,
   "scripts": {
     "dev": "mastra dev",
     "build": "mastra build",
-    "start": "mastra start"
+    "start": "mastra start",
+    "typecheck": "tsc --noEmit",
+    "test": "tsx --test tests/*.test.ts",
+    "test:integration": "tsx --test tests/integration/*.test.ts",
+    "local:install": "tsx scripts/install-local.ts",
+    "local:stop": "tsx scripts/install-local.ts --stop",
+    "local:status": "tsx scripts/install-local.ts --status"
   },
   "keywords": [],
   "author": "",
@@ -21,15 +27,21 @@
     "@mastra/core": "latest",
     "@mastra/editor": "latest",
     "@mastra/loggers": "latest",
+    "@mastra/mcp": "^2.4.1",
     "@mastra/memory": "latest",
     "@mastra/observability": "latest",
     "@mastra/pg": "latest",
     "@mastra/platform-workspace": "latest",
+    "ipaddr.js": "^2.5.0",
+    "pg": "^8.16.3",
+    "undici": "^7.30.1",
     "zod": "^4.3.6"
   },
   "devDependencies": {
     "@types/node": "^24.10.9",
+    "@types/pg": "^8.15.5",
     "mastra": "latest",
+    "tsx": "^4.20.6",
     "typescript": "^5.9.3"
   }
 }

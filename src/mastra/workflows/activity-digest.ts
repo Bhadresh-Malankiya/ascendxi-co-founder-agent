@@ -1,7 +1,8 @@
+import { readToolAllowlist } from '../company/policy';
 import { PROVIDERS } from '@mastra/connect';
 import { createWorkflow, createStep } from '@mastra/core/workflows';
 import { z } from 'zod';
-import { connectTools } from '../agents/agent';
+import { connectTools } from '../company/connections';
 
 export const digestSchema = z.object({
   headline: z.string().describe('One sentence capturing the overall state of play.'),
@@ -69,7 +70,7 @@ const discoverIntegrationsStep = createStep({
     const tools = await connectTools({ mastra });
     const keys = Object.keys(tools);
     const integrations = [...new Set(keys.map(integrationIdForToolKey))].sort();
-    const readOnlyTools = keys.filter(key => READ_VERBS.test(key) && !WRITE_VERBS.test(key));
+    const readOnlyTools = keys.filter(key => readToolAllowlist().has(key) && READ_VERBS.test(key) && !WRITE_VERBS.test(key));
     return { focus: inputData.focus, integrations, readOnlyTools };
   },
 });

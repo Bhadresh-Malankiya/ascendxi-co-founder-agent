@@ -10,3 +10,9 @@ src/mastra/public/
 *.db-*
 .netlify
 .vercel
+
+.env.*
+!.env.example
+.mastra-project.json
+
+.local/
