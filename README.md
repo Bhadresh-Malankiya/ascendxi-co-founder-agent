@@ -4,6 +4,41 @@ A Mastra company operating system for AscendXI and its named portfolio: VocalXI,
 
 The system runs **seven accountable owners**: Co-Founder, Product & Delivery, Engineering, Design, Growth & Customer, Quality & Security, and Operations Monitor. Seventeen specialist mandates are on-demand capability profiles. New products and clients reuse the shared team. Durable plans support founder-delegated automatic approval of internal work with `ASCENDXI_AUTONOMY=internal`; consequential external actions retain separate approval gates. Product facts, customers and metrics must come from verified records.
 
+## How it works
+
+```mermaid
+flowchart TB
+    founder["Co-Founder\npriorities, approvals, final synthesis"]
+    product["Product & Delivery\nstrategy, milestones, handoffs"]
+    engineering["Engineering\nsystems, infrastructure, evidence"]
+    design["Design\nresearch, UX, accessibility"]
+    growth["Growth & Customer\nleads, outreach, support drafts"]
+    quality["Quality & Security\nindependent review, privacy, release checks"]
+    monitor["Operations Monitor\nhealth, stalled work, approval needs"]
+
+    founder --> product
+    founder --> engineering
+    founder --> design
+    founder --> growth
+    founder --> quality
+    monitor -. observes .-> founder
+    quality -. independent review .-> founder
+```
+
+The Co-Founder is the front door and final decision-maker. Department owners prepare bounded work; Quality & Security remains independent, while Operations Monitor continuously surfaces health and blockers without making model calls when idle.
+
+### Guardrails at a glance
+
+| Control | What it protects |
+| --- | --- |
+| Versioned plan approval | New goals and changed scope cannot start work without the approved revision. |
+| Atomic task claim + idempotency key | Only one worker owns a queued task; duplicate requests do not create duplicate work. |
+| Isolated artifact workflow | Assignment work has external tools disabled, even when an owner has interactive grants. |
+| Independent review | Quality reviews other owners; Quality-owned work is reviewed by the Co-Founder. |
+| Evidence-first status | Provider failures and evidence gaps become blockers, never successful work. |
+| Exact, approved integrations | Connect tools require scoped grants and approval unless explicitly classified as a safe read. |
+| Bounded autonomy | Internal artifact plans may be auto-approved by policy; access, spending, deployment, and client scope never are. |
+
 ## Start locally
 
 Requires Node **22.13+**, npm, Postgres **14+**, and a valid model credential for live generation.
@@ -62,6 +97,19 @@ Plans centralizes versioned scope, product, priority, acceptance, sources, miles
 Blocker inspectors expose cause, owner, next action, evidence attachment, bounded safe reassessment and typed access/budget/service requests. The monitor can retry an evidence-only artifact after new proof, at most twice/day per task. It never retries uncertain external writes. See [plans, approvals, lean ownership and Discord discussions](docs/plans-and-blockers.md).
 
 ## Assignment lifecycle
+
+```mermaid
+flowchart LR
+    plan["1. Propose plan"] --> approval{"2. Exact scope\napproved?"}
+    approval -- "no / revised" --> plan
+    approval -- "yes" --> claim["3. Claim task\natomically"]
+    claim --> artifact["4. Owner prepares\ninternal artifact"]
+    artifact --> review["5. Independent\nquality review"]
+    review -- "failure or evidence gap" --> blocked["Blocked\nrecord cause + next action"]
+    review -- "passes" --> decision{"6. Completion\nauthorized?"}
+    decision -- "founder approval or\nallowed internal charter" --> complete["Complete\npersist report + review"]
+    decision -- "not authorized" --> review
+```
 
 1. Review `company_plans` and obtain founder approval for new scope first. Ask the co-founder to inspect `company_status` and create a task under an active approved goal with a stable idempotency key, portfolio product, department, objective and acceptance criteria.
 2. `run_company_task` starts the registered `companyTaskWorkflow`. Its atomic Postgres claim prevents two workers from owning the same queued task.
